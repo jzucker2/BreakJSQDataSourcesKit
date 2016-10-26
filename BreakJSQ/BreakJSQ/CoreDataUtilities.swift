@@ -15,6 +15,7 @@ extension TestObject {
             let _ = TestObject(title: title, context: context)
             do {
                 try context.save()
+                print(#function)
             } catch {
                 fatalError(error.localizedDescription)
             }

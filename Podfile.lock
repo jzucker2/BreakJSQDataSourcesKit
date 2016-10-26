@@ -2,11 +2,21 @@ PODS:
   - JSQDataSourcesKit (6.0.0)
 
 DEPENDENCIES:
-  - JSQDataSourcesKit
+  - JSQDataSourcesKit (from `https://github.com/jzucker2/JSQDataSourcesKit.git`, branch `core-data-collection-view-fix`)
+
+EXTERNAL SOURCES:
+  JSQDataSourcesKit:
+    :branch: core-data-collection-view-fix
+    :git: https://github.com/jzucker2/JSQDataSourcesKit.git
+
+CHECKOUT OPTIONS:
+  JSQDataSourcesKit:
+    :commit: 4d2eede9410e90282ac71242839dfd164d4254d0
+    :git: https://github.com/jzucker2/JSQDataSourcesKit.git
 
 SPEC CHECKSUMS:
   JSQDataSourcesKit: 20cda71984408006b4c3e0cf224343fd1a913d58
 
-PODFILE CHECKSUM: 06340ea19cee062ee6ad21c81a88edbca5127ebb
+PODFILE CHECKSUM: c186538d1d990ca50221005d69663c7798ddabbd
 
 COCOAPODS: 1.1.1

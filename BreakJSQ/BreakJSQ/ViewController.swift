@@ -26,13 +26,17 @@ class ViewController: UIViewController {
         }
     }
     
+    let accessQueue: DispatchQueue = {
+        return DispatchQueue(label: "Test", qos: .userInitiated, attributes: [.concurrent])
+    }()
+    
     lazy var fetchedResultsController: TestObjectFRC = {
         let allResultsFetchRequest: NSFetchRequest<TestObject> = TestObject.fetchRequest()
         let creationDateSortDescriptor = NSSortDescriptor(key: #keyPath(TestObject.creationDate), ascending: false)
         allResultsFetchRequest.sortDescriptors = [creationDateSortDescriptor]
         let controller = TestObjectFRC(fetchRequest: allResultsFetchRequest, managedObjectContext: UIApplication.shared.persistentContainer.viewContext, sectionNameKeyPath: #keyPath(TestObject.creationDate), cacheName: nil)
         assert(self.delegateProvider != nil, "Delegate Provider must exist")
-        controller.delegate = self.delegateProvider.collectionDelegate
+        controller.delegate = self.delegateProvider.collectionDelegate(accessQueue: self.accessQueue)
         return controller
     }()
     
@@ -75,7 +79,7 @@ class ViewController: UIViewController {
         }
         
         self.delegateProvider = FetchedResultsDelegateProvider(cellFactory: cellFactory, collectionView: collectionView)
-        self.dataSourceProvider = DataSourceProvider(dataSource: fetchedResultsController, cellFactory: cellFactory, supplementaryFactory: headerFactory)
+        self.dataSourceProvider = DataSourceProvider(dataSource: fetchedResultsController, cellFactory: cellFactory, supplementaryFactory: headerFactory, accessQueue: accessQueue)
         collectionView.dataSource = dataSourceProvider.collectionViewDataSource
         
         navigationItem.title = "Break It!"
