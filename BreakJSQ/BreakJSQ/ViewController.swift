@@ -20,6 +20,12 @@ class ViewController: UIViewController {
     
     var delegateProvider: FetchedResultsDelegateProvider<TestObjectCellFactory>!
     
+    weak var createTestObjectTimer: Timer? {
+        willSet {
+            createTestObjectTimer?.invalidate()
+        }
+    }
+    
     lazy var fetchedResultsController: TestObjectFRC = {
         let allResultsFetchRequest: NSFetchRequest<TestObject> = TestObject.fetchRequest()
         let creationDateSortDescriptor = NSSortDescriptor(key: #keyPath(TestObject.creationDate), ascending: false)
@@ -76,6 +82,7 @@ class ViewController: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTestObjectsButtonTapped(sender:)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Break", style: .plain, target: self, action: #selector(breakButtonTapped(sender:)))
         fetch()
+        createTestObjectTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(createObjectTimerFired(timer:)), userInfo: nil, repeats: true)
     }
 
     override func didReceiveMemoryWarning() {
@@ -86,31 +93,22 @@ class ViewController: UIViewController {
     // MARK: - Actions
     
     func addTestObjectsButtonTapped(sender: UIBarButtonItem) {
-        UIApplication.shared.persistentContainer.performBackgroundTask { (context) in
-            for i in 0..<20 {
-                let createdTestObject = TestObject(context: context)
-                createdTestObject.title = "Item \(i)"
-            }
-            do {
-                try context.save()
-            } catch {
-                fatalError(error.localizedDescription)
-            }
+        for i in 0..<20 {
+            let title = "Item \(i)"
+            TestObject.saveObject(title: title)
         }
+    }
+    
+    func createObjectTimerFired(timer: Timer) {
+        let now = "\(Date())"
+        TestObject.saveObject(title: now)
     }
     
     func concurrentCreate() {
         DispatchQueue.concurrentPerform(iterations: 5, execute: { (count) -> Void in
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.1, execute: { 
-                UIApplication.shared.persistentContainer.performBackgroundTask({ (context) in
-                    let createdTestObject = TestObject(context: context)
-                    createdTestObject.title = "Item \(count)"
-                    do {
-                        try context.save()
-                    } catch {
-                        fatalError(error.localizedDescription)
-                    }
-                })
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.1, execute: {
+                let title = "Item \(count)"
+                TestObject.saveObject(title: title)
             })
         })
     }

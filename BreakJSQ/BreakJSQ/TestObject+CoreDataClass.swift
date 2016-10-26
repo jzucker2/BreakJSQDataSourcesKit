@@ -12,6 +12,11 @@ import CoreData
 @objc(TestObject)
 public class TestObject: NSManagedObject {
     
+    public convenience init(title: String, context moc: NSManagedObjectContext) {
+        self.init(context: moc)
+        self.title = title
+    }
+    
     public override func awakeFromInsert() {
         super.awakeFromInsert()
         creationDate = NSDate()

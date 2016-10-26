@@ -8,18 +8,6 @@
 
 import UIKit
 
-extension UIView {
-    
-    static func reuseIdentifier() -> String {
-        return NSStringFromClass(self)
-    }
-    
-    func forceAutoLayout() {
-        self.translatesAutoresizingMaskIntoConstraints = false
-    }
-
-}
-
 class ObjectCollectionViewCell: UICollectionViewCell {
     
     internal let titleLabel: UILabel
